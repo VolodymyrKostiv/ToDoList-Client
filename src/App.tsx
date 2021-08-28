@@ -1,9 +1,18 @@
-import { Button } from 'antd';
+import { Row, Col } from 'antd';
+import { Main } from './components/Main'
+
+import { Job } from './components/Job';
 
 function App() {
   return (
-    <div className="App">
-      <Button type="primary">Primary Button</Button>
+    <div>
+      <Row>
+        <Col span={4} />
+        <Col span={16}>
+          <Main />
+        </Col>
+        <Col span={4} />
+      </Row>
     </div>
   );
 }

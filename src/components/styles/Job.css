@@ -1,0 +1,13 @@
+.job-card {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+}
+
+.job-button {
+    width: 35%;
+    margin-left: 10%;
+    margin-top: 3%;    
+    padding: 0, 0;
+}
