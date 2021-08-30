@@ -1,9 +1,7 @@
 import { Row, Col } from 'antd';
 import { Main } from './components/Main'
 
-import { Job } from './components/Job';
-
-function App() {
+export function App() {
   return (
     <div>
       <Row>
