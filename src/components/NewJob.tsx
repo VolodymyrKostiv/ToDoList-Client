@@ -2,6 +2,8 @@ import './styles/NewJob.css'
 import React, { FC, useState } from "react";
 import { Button, DatePicker, Form, Input, message, Modal } from 'antd';
 import axios from 'axios';
+import { URLtoBack } from '../App';
+
 
 export const NewJob: FC = () => {
 
@@ -17,8 +19,8 @@ export const NewJob: FC = () => {
     const [dueToDate, setDueToDate] = useState<string | null>(); 
 
     const layout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 18 },
+        labelCol: { span: 8 },
+        wrapperCol: { span: 16 },
     };
 
     const showModal = () => {
@@ -35,7 +37,7 @@ export const NewJob: FC = () => {
         }
         try {
             const savedJob = axios.post(
-                'https://localhost:44360/api/jobs/',
+                URLtoBack,
                 newJob
             );
             setIsModalVisible(false);
@@ -43,6 +45,8 @@ export const NewJob: FC = () => {
             form.resetFields();
         } catch {
 
+        } finally {
+            document.location.reload();
         }
     }
     const handleCancel = () => { 

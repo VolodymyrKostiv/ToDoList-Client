@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
+import { URLtoBack } from "../App";
 import { JobItem } from "./JobItem";
 
 export const JobItemList: FC = () => {
@@ -15,7 +16,7 @@ export const JobItemList: FC = () => {
     }, [])
 
     async function fetchJobs() {
-        const response = await axios.get('https://localhost:44360/api/jobs/');
+        const response = await axios.get(URLtoBack);
         setJobsList(response.data);           
         console.log(response.data);
         console.log(jobsList);
@@ -34,7 +35,7 @@ export const JobItemList: FC = () => {
         );
     } else {
         return (
-            <div>No elements</div>
+            <h2>No elements</h2>
         );
     }
 }

@@ -5,6 +5,7 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import { useForm } from 'antd/lib/form/Form';
 import axios from 'axios';
+import { URLtoBack } from '../App';
 
 const { Paragraph, Text } = Typography;
 const { Step } = Steps;
@@ -20,12 +21,12 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
 
     const [form] = useForm();
 
-    const [title, setTitle] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [whoAssigned, setWhoAssigned] = useState<string>("");
-    const [assignedTo, setAssignedTo] = useState<string>(""); 
-    const [dateOfAssigning, setDateOfAssigning] = useState<string | null>();
-    const [dueToDate, setDueToDate] = useState<string | null>(); 
+    const [title, setTitle] = useState<string>(job.title);
+    const [description, setDescription] = useState<string>(job.description);
+    const [whoAssigned, setWhoAssigned] = useState<string>(job.whoAssigned);
+    const [assignedTo, setAssignedTo] = useState<string>(job.assignedTo); 
+    const [dateOfAssigning, setDateOfAssigning] = useState<Date | string | null>();
+    const [dueToDate, setDueToDate] = useState<Date | string | null>(); 
     const [current, setCurrent] = useState<number>(job.status);
 
     const showModal = () => { 
@@ -36,18 +37,18 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
         form.resetFields();
     }
     const layout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 18 },
+        labelCol: { span: 8 },
+        wrapperCol: { span: 16 },
     };
 
     const handleDelete = () => {
         try { 
-            axios.delete('https://localhost:44360/api/jobs/' + job.id);
+            axios.delete(URLtoBack + job.id);
             message.success('Task was deleted');
         } catch {
             console.log('Error during deleting Item with id = ' + job.id);
             message.error('Error during deleting');
-        }
+        } 
     }
 
     const handleUpdate = () => {
@@ -61,7 +62,7 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
         }
 
         try {
-            axios.put('https://localhost:44360/api/jobs/' + job.id, newJob);
+            axios.put(URLtoBack + job.id, newJob);
             message.success('Job was updated successfully!');
         } catch {
             console.log('Error during updating Item with id = ' + job.id);
@@ -74,7 +75,7 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
     
     const handleUpdateStatus = (current : number) => {
 
-        const newJob: Job= {
+        const newJob: Job = {
             id: job.id,
             title: job.title,
             description: job.description,
@@ -86,7 +87,7 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
         }
 
         try {
-            axios.put('https://localhost:44360/api/jobs/' + job.id, newJob);
+            axios.put(URLtoBack + job.id, newJob);
         } catch {
             console.log('Error during updating Item with id = ' + job.id);
             message.error('Error during updating');
@@ -137,25 +138,25 @@ export const JobItem: FC<JobItemProps> = ({job} : JobItemProps) => {
                 <Step title="Done" />
             </Steps>
 
-            <Modal title="Edit task" visible={isModalVisible} onOk={handleUpdate} onCancel={handleCancel}>
+            <Modal title="Edit task" visible={isModalVisible} onOk={form.submit} onCancel={handleCancel}>
                 <Form form={form} {...layout} name="nest-messages" onFinish={handleUpdate} validateMessages={validateMessages}>
-                    <Form.Item name={['job', 'title']} label="Title" rules={[{ required: true }]}>
-                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)}/>
+                    <Form.Item name={['job', 'title']} label="Title">
+                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} defaultValue={job.title}/>
                     </Form.Item>
-                    <Form.Item name={['job', 'description']} label="Description" rules={[{ required: true }]}>
-                        <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)}/>
+                    <Form.Item name={['job', 'description']} label="Description">
+                        <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)} defaultValue={job.description}/>
                     </Form.Item>
-                    <Form.Item name={['job', 'whoAssigned']} label="Who assigned" rules={[{ required: true }]}>
-                        <Input type="text" maxLength={50} onChange={x => setWhoAssigned(x.target.value)}/>
+                    <Form.Item name={['job', 'whoAssigned']} label="Who assigned">
+                        <Input type="text" maxLength={50} onChange={x => setWhoAssigned(x.target.value)} defaultValue={job.whoAssigned}/>
                     </Form.Item>
-                    <Form.Item name={['job', 'assignedTo']} label="Assigned to" rules={[{ required: true }]}>
-                        <Input type="text" maxLength={50} onChange={x => setAssignedTo(x.target.value)}/>
+                    <Form.Item name={['job', 'assignedTo']} label="Assigned to">
+                        <Input type="text" maxLength={50} onChange={x => setAssignedTo(x.target.value)} defaultValue={job.assignedTo}/>
                     </Form.Item>
-                    <Form.Item name={['job', 'dateOfAssigning']} label="Date of assigning" >
+                    <Form.Item name={['job', 'dateOfAssigning']} label="Date of assigning">
                         <DatePicker onChange={x => setDateOfAssigning(x?.toString())} />
                     </Form.Item>
-                    <Form.Item name={['job', 'dueToDate']} label="Due to" rules={[{ required: true }]}>
-                        <DatePicker onChange={x => setDueToDate(x?.toString())}/>
+                    <Form.Item name={['job', 'dueToDate']} label="Due to">
+                        <DatePicker onChange={x => setDueToDate(x?.toString())} />
                     </Form.Item>
                 </Form>
             </Modal>

@@ -1,6 +1,8 @@
 import { Row, Col } from 'antd';
 import { Main } from './components/Main'
 
+export const URLtoBack: string = 'https://localhost:44360/api/jobs/';
+
 export function App() {
   return (
     <div>
