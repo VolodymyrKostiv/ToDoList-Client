@@ -1,0 +1,1 @@
+export const URLtoBack: string = 'https://localhost:44360/api/jobs/';

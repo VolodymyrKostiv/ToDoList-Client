@@ -14,3 +14,5 @@ type Job = {
     dueToDate: Date;
     status: JobStatus;
 }
+
+type ChangeList = (arg: Array<Job>) => void;

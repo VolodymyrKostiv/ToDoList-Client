@@ -1,15 +1,18 @@
 import './styles/NewJob.css'
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { Button, DatePicker, Form, Input, message, Modal } from 'antd';
 import axios from 'axios';
-import { URLtoBack } from '../App';
+import {URLtoBack} from '../ConnectionString';
 
+interface AddNewJobProps {
+    jobsList: Array<Job>;
+    setJobsList: ChangeList;
+}
 
-export const NewJob: FC = () => {
+export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNewJobProps) => {
 
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [inputJob, setInputJob] = useState<Job>();
 
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
@@ -26,29 +29,41 @@ export const NewJob: FC = () => {
     const showModal = () => {
         setIsModalVisible(true);
     }
+
     const handleSubmit = () => { 
-        const newJob: Omit<Job, "id"  | "status"> = {
+        const newJob: Job = {
+            id: 0,
             title: title,
             description: description,
             whoAssigned: whoAssigned,
             assignedTo: assignedTo,
             dateOfAssigning: dateOfAssigning? new Date(dateOfAssigning) : new Date(),
             dueToDate: dueToDate? new Date(dueToDate) : new Date(),
+            status: 0,
         }
-        try {
-            const savedJob = axios.post(
-                URLtoBack,
-                newJob
-            );
-            setIsModalVisible(false);
-            message.success('Job was updated successfully!');
-            form.resetFields();
-        } catch {
+        
+        axios.post(
+            URLtoBack,
+            newJob)
+            .then(response => {
+                console.log(response);
+                newJob.id = response.data.id;
+            })
+            .catch(e => {
+                console.log('Error during adding new item');
+                message.error('Error during status adding new item!');
+            });
+        
+        message.success('Job was added successfully!');
+        setIsModalVisible(false);
 
-        } finally {
-            document.location.reload();
-        }
+        setJobsList([
+            ...jobsList, 
+            newJob   
+        ]);
+        form.resetFields();
     }
+
     const handleCancel = () => { 
         setIsModalVisible(false);
         form.resetFields();
@@ -67,7 +82,7 @@ export const NewJob: FC = () => {
             <Modal title="New job" visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel}>
                 <Form form={form} {...layout} name="nest-messages" onFinish={handleSubmit} validateMessages={validateMessages}>
                     <Form.Item name={['job', 'title']} label="Title" rules={[{ required: true }]}>
-                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)}/>
+                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} />
                     </Form.Item>
                     <Form.Item name={['job', 'description']} label="Description">
                         <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)}/>

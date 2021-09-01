@@ -1,14 +1,27 @@
 import './styles/Center.css';
-import React, { FC, useState } from "react"
-import { JobItem } from './JobItem';
-import { NewJob } from './NewJob';
-import { JobItemList } from './JobItemList';
+import React, { FC, useEffect, useState } from "react"
+import { AddNewJob } from './AddNewJob';
+import { JobItemList } from './JobItemsList';
+import { URLtoBack } from '../ConnectionString';
+import axios from 'axios';
 
-export const Center: FC = () => {
-    return (
-      <>
-        <NewJob />
-        <JobItemList />
-      </>
-    );
+export const MainCenter: FC = () => {
+
+  const [jobsList, setJobsList] = useState<Array<Job>>([]);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      const response = await axios.get(URLtoBack);
+      setJobsList(response.data);           
+      console.log(response.data);
+    }
+    fetchJobs();
+  }, [])
+
+  return (
+    <>
+      <AddNewJob jobsList={jobsList} setJobsList={setJobsList}/>
+      <JobItemList jobsList={jobsList} setJobsList={setJobsList}/>
+    </>
+  );
 }
