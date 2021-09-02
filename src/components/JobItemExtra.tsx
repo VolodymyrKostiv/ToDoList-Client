@@ -63,26 +63,28 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
             dueToDate: dueToDate? new Date(dueToDate) : new Date(),
             status: job.status,
         }
-        axios.put(URLtoBack + job.id, newJob)
+        axios.put(
+                URLtoBack + job.id, 
+                newJob)
             .then(data => {
                 console.log(data);
+
+                message.success('Job was updated successfully!');
+
+                const index = jobsList.findIndex(emp => emp.id === job.id);
+                const alterJobsList = [...jobsList];
+                alterJobsList[index] = newJob;
+
+                setJobsList(alterJobsList);
+
+                setIsModalVisible(false);
             })
-            .catch (e => {
+            .catch((error: Error) => {
                 console.log('Error during updating Item with id = ' + job.id);
-                console.log(e);
+                console.log(error);
                 message.error('Error during updating');
+                message.error(error.message);
             });
-
-        message.success('Job was updated successfully!');
-
-        const index = jobsList.findIndex(emp => emp.id === job.id);
-        const alterJobsList = [...jobsList];
-        alterJobsList[index] = newJob;
-        setJobsList(alterJobsList);
-        
-        setIsModalVisible(false);
-
-        form.resetFields();
     }
 
 
@@ -98,14 +100,14 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
 
             <Modal title="Edit task" visible={isModalVisible} onOk={form.submit} onCancel={handleCancel}>
                 <Form form={form} {...layout} name="nest-messages" onFinish={handleUpdate} validateMessages={validateMessages}>
-                    <Form.Item name={['job', 'title']} label="Title">
-                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} defaultValue={job.title} />
+                    <Form.Item name={['job', 'title']} label="Title" initialValue={job.title}>
+                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} />
                     </Form.Item>
                     <Form.Item name={['job', 'description']} label="Description">
                         <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)} defaultValue={job.description}/>
                     </Form.Item>
-                    <Form.Item name={['job', 'whoAssigned']} label="Who assigned">
-                        <Input type="text" maxLength={50} onChange={x => setWhoAssigned(x.target.value)} defaultValue={job.whoAssigned}/>
+                    <Form.Item name={['job', 'whoAssigned']} label="Who assigned" initialValue={job.whoAssigned}>
+                        <Input type="text" maxLength={50} onChange={x => setWhoAssigned(x.target.value)} />
                     </Form.Item>
                     <Form.Item name={['job', 'assignedTo']} label="Assigned to">
                         <Input type="text" maxLength={50} onChange={x => setAssignedTo(x.target.value)} defaultValue={job.assignedTo}/>

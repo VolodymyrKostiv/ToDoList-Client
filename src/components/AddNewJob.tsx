@@ -45,23 +45,26 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
         axios.post(
             URLtoBack,
             newJob)
-            .then(response => {
-                console.log(response);
-                newJob.id = response.data.id;
+            .then((res) => {
+                newJob.id = res.data.id;
+                message.success('Job was added successfully!');
+                setIsModalVisible(false);
+                setJobsList([
+                    ...jobsList, 
+                    newJob   
+                ])                
             })
-            .catch(e => {
-                console.log('Error during adding new item');
-                message.error('Error during status adding new item!');
+            .catch((error: Error) => {
+                console.log('Error during adding new item: ' + newJob);
+                console.log(error);
+                message.error('Error during adding new Job');
+                message.error(error.message);
+            })
+            .finally(() => {
+                console.log(form.getFieldValue(['job', 'title']));
+                console.log(form.getFieldValue(['job', 'description']));
+                form.resetFields();
             });
-        
-        message.success('Job was added successfully!');
-        setIsModalVisible(false);
-
-        setJobsList([
-            ...jobsList, 
-            newJob   
-        ]);
-        form.resetFields();
     }
 
     const handleCancel = () => { 
@@ -80,9 +83,9 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
             </Button>
 
             <Modal title="New job" visible={isModalVisible} onOk={handleSubmit} onCancel={handleCancel}>
-                <Form form={form} {...layout} name="nest-messages" onFinish={handleSubmit} validateMessages={validateMessages}>
-                    <Form.Item name={['job', 'title']} label="Title" rules={[{ required: true }]}>
-                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} />
+                <Form form={form} {...layout} name="add-new-job" onFinish={handleSubmit} validateMessages={validateMessages}>
+                    <Form.Item name={['job', 'title']} label="Title" required={true}>
+                        <Input type="text" maxLength={100}  onChange={x => setTitle(x.target.value)}/>
                     </Form.Item>
                     <Form.Item name={['job', 'description']} label="Description">
                         <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)}/>
