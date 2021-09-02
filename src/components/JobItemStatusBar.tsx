@@ -31,6 +31,8 @@ export const JobItemStatusBar: FC<JobStatusBarProps> = ({ job }: JobStatusBarPro
                 console.log('Error during updating status of item with id = ' + job.id);
                 message.error('Error during status updating!');
             });
+            
+        job.status = newStatus;
         setCurrentStatus(newStatus);
     }
     
