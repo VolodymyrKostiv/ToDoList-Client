@@ -50,8 +50,8 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
                 setIsModalVisible(false);
 
                 setJobsList([
-                    ...jobsList, 
-                    newJob   
+                    newJob,
+                    ...jobsList
                 ])                
             })
             .catch((error: Error) => {
