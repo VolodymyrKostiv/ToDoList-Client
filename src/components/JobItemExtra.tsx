@@ -14,23 +14,15 @@ interface JobItemExtraProps {
 
 export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList }: JobItemExtraProps) => {
 
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
     const [form] = useForm<Job>();
-    const [title, setTitle] = useState<string>(job.title);
-    const [description, setDescription] = useState<string>(job.description);
-    const [whoAssigned, setWhoAssigned] = useState<string>(job.whoAssigned);
-    const [assignedTo, setAssignedTo] = useState<string>(job.assignedTo); 
-    const [dateOfAssigning, setDateOfAssigning] = useState<Date | string | null>();
-    const [dueToDate, setDueToDate] = useState<Date | string | null>(); 
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    
+    const [dateOfAssigning, setDateOfAssigning] = useState<string | null>();
+    const [dueToDate, setDueToDate] = useState<string | null>(); 
 
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
-    };
-
-    const validateMessages = {
-        required: '${label} is required!',
     };
 
     const handleOnEditClick = () => {
@@ -43,7 +35,9 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
                 console.log('Error during deleting Item with id = ' + job.id);
                 message.error('Error during deleting');
             });
+
         message.success('Task was deleted');
+
         setJobsList(jobsList.filter(item => item.id !== job.id));
     }
 
@@ -53,14 +47,15 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
     }
    
     const handleUpdate = () => {
+
         const newJob: Job = {
             id: job.id,
-            title: title,
-            description: description,
-            whoAssigned: whoAssigned,
-            assignedTo: assignedTo,
-            dateOfAssigning: dateOfAssigning? new Date(dateOfAssigning) : new Date(),
-            dueToDate: dueToDate? new Date(dueToDate) : new Date(),
+            title: form.getFieldValue(['job', 'title']) ? form.getFieldValue(['job', 'title']) : job.title,
+            description: form.getFieldValue(['job', 'description']) ? form.getFieldValue(['job', 'description']) : 'No description',
+            whoAssigned: form.getFieldValue(['job', 'whoAssigned']) ? form.getFieldValue(['job', 'whoAssigned']) : job.whoAssigned,
+            assignedTo: form.getFieldValue(['job', 'assignedTo']) ? form.getFieldValue(['job', 'assignedTo']) : job.assignedTo,
+            dateOfAssigning: dateOfAssigning? new Date(dateOfAssigning) : new Date(job.dateOfAssigning),
+            dueToDate: dueToDate? new Date(dueToDate) : new Date(job.dueToDate),
             status: job.status,
         }
         axios.put(
@@ -82,12 +77,14 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
             .catch((error: Error) => {
                 console.log('Error during updating Item with id = ' + job.id);
                 console.log(error);
+
                 message.error('Error during updating');
                 message.error(error.message);
+            })
+            .finally(() => {
+                form.resetFields();
             });
     }
-
-
     
     return (
         <Content> 
@@ -99,23 +96,23 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
             </Popconfirm>   
 
             <Modal title="Edit task" visible={isModalVisible} onOk={form.submit} onCancel={handleCancel}>
-                <Form form={form} {...layout} name="nest-messages" onFinish={handleUpdate} validateMessages={validateMessages}>
-                    <Form.Item name={['job', 'title']} label="Title" initialValue={job.title}>
-                        <Input type="text" maxLength={100} onChange={x => setTitle(x.target.value)} />
+                <Form form={form} {...layout} name="nest-messages" onFinish={handleUpdate}>
+                    <Form.Item required={true} name={['job', 'title']} label="Title" initialValue={job.title}>
+                        <Input required={true} type="text" maxLength={100} />
                     </Form.Item>
-                    <Form.Item name={['job', 'description']} label="Description">
-                        <Input.TextArea maxLength={300} onChange={x => setDescription(x.target.value)} defaultValue={job.description}/>
+                    <Form.Item name={['job', 'description']} label="Description" initialValue={job.description}> 
+                        <Input.TextArea maxLength={300} />
                     </Form.Item>
-                    <Form.Item name={['job', 'whoAssigned']} label="Who assigned" initialValue={job.whoAssigned}>
-                        <Input type="text" maxLength={50} onChange={x => setWhoAssigned(x.target.value)} />
+                    <Form.Item required={true} name={['job', 'whoAssigned']} label="Who assigned" initialValue={job.whoAssigned}>
+                        <Input required={true} type="text" maxLength={50} />
                     </Form.Item>
-                    <Form.Item name={['job', 'assignedTo']} label="Assigned to">
-                        <Input type="text" maxLength={50} onChange={x => setAssignedTo(x.target.value)} defaultValue={job.assignedTo}/>
+                    <Form.Item required={true} name={['job', 'assignedTo']} label="Assigned to" initialValue={job.assignedTo}>
+                        <Input required={true} type="text" maxLength={50} />
                     </Form.Item>
-                    <Form.Item name={['job', 'dateOfAssigning']} label="Date of assigning">
+                    <Form.Item required={true} name={['job', 'dateOfAssigning']} label="Date of assigning">
                         <DatePicker onChange={x => setDateOfAssigning(x?.toString())} />
                     </Form.Item>
-                    <Form.Item name={['job', 'dueToDate']} label="Due to">
+                    <Form.Item required={true} name={['job', 'dueToDate']} label="Due to">
                         <DatePicker onChange={x => setDueToDate(x?.toString())} />
                     </Form.Item>
                 </Form>
