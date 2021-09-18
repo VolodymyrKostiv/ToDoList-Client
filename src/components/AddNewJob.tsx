@@ -49,10 +49,7 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
 
                 setIsModalVisible(false);
 
-                setJobsList([
-                    newJob,
-                    ...jobsList
-                ])                
+                fetchJobs();               
             })
             .catch((error: Error) => {
                 console.log('Error during adding new item: ' + newJob);
@@ -64,6 +61,13 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
             .finally(() => {
                 form.resetFields();
             });
+    }
+
+    async function fetchJobs() {
+        const response = await axios.get(URLtoBack);
+        const arrOfJobs : Array<Job> = response.data;
+        setJobsList(arrOfJobs.reverse());           
+        console.log(response.data);
     }
 
     const handleCancel = () => { 
@@ -83,7 +87,7 @@ export const AddNewJob: FC<AddNewJobProps> = ({ jobsList, setJobsList } : AddNew
                         <Input required={true} type="text" maxLength={100} />
                     </Form.Item>
                     <Form.Item name={['job', 'description']} label="Description">
-                        <Input.TextArea maxLength={300} />
+                        <Input.TextArea showCount maxLength={300} />
                     </Form.Item>
                     <Form.Item required={true} name={['job', 'whoAssigned']} label="Who assigned">
                         <Input required={true} type="text" maxLength={50} />

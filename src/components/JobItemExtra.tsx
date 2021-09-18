@@ -66,11 +66,7 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
 
                 message.success('Job was updated successfully!');
 
-                const index = jobsList.findIndex(emp => emp.id === job.id);
-                const alterJobsList = [...jobsList];
-                alterJobsList[index] = newJob;
-
-                setJobsList(alterJobsList);
+                fetchJobs()
 
                 setIsModalVisible(false);
             })
@@ -84,6 +80,13 @@ export const JobItemExtra: FC<JobItemExtraProps> = ({ job, jobsList, setJobsList
             .finally(() => {
                 form.resetFields();
             });
+    }
+
+    async function fetchJobs() {
+        const response = await axios.get(URLtoBack);
+        const arrOfJobs : Array<Job> = response.data;
+        setJobsList(arrOfJobs.reverse());           
+        console.log(response.data);
     }
     
     return (

@@ -1,4 +1,5 @@
 import { Divider, Typography } from 'antd'
+import moment from 'moment';
 import { FC, useState } from 'react'
 
 const { Paragraph, Text } = Typography;
@@ -21,8 +22,8 @@ export const JobItemContent: FC<JobItemContentProps> = ({ job } : JobItemContent
 
             <Text>Assigned to </Text>
             <Text strong>{job.assignedTo}</Text>
-            <Text> by {job.whoAssigned} on {job.dateOfAssigning.toLocaleString()} due to </Text>
-            <Text strong>{job.dueToDate.toLocaleString()}</Text>
+            <Text> by {job.whoAssigned} on {moment(job.dateOfAssigning.toLocaleString()).format("DD.MM.YYYY")} due to </Text>
+            <Text strong>{moment(job.dueToDate.toLocaleString()).format("DD.MM.YYYY")}</Text>
            
             <Divider />
         </>

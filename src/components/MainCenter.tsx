@@ -12,7 +12,8 @@ export const MainCenter: FC = () => {
   useEffect(() => {
     async function fetchJobs() {
       const response = await axios.get(URLtoBack);
-      setJobsList(response.data);           
+      const arrOfJobs : Array<Job> = response.data;
+      setJobsList(arrOfJobs.reverse());           
       console.log(response.data);
     }
     fetchJobs();
